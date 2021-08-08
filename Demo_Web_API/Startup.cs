@@ -25,6 +25,7 @@ namespace Demo_Web_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddControllers();
         }
 
@@ -35,6 +36,11 @@ namespace Demo_Web_API
             {
                 app.UseDeveloperExceptionPage();
             }
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
