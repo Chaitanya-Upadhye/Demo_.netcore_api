@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demo_Web_API.Models
 {
-    public class AuthenticateRequestModel
+    public class AuthenticateRequest
     {
 
         [Required]
