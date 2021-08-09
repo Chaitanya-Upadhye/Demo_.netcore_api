@@ -15,7 +15,7 @@ C# extension for Visual Studio Code - adds support to VS Code for developing .NE
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  https://github.com/Chaitanya-Upadhye/Demo_.netcore_api.git
 ```
 
 
