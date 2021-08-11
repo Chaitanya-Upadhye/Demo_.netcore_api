@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Demo_Web_API.Entities
 {
-    public class User
+    public class UserDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }

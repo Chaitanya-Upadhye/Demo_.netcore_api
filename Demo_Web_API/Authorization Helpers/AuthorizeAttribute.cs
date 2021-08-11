@@ -15,7 +15,7 @@ namespace Demo_Web_API.Authorization_Helpers
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var user = (User)context.HttpContext.Items["User"];
+            var user = (UserDTO)context.HttpContext.Items["User"];
             if (user == null)
             {
                 // the user is not logged in

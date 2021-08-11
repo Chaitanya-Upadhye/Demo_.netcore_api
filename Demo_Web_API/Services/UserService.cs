@@ -10,51 +10,121 @@ using Demo_Web_API.Entities;
 using Demo_Web_API.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Demo_Web_API.DBModels;
+using Demo_Web_API.Data;
 
 namespace Demo_Web_API.Services
 {
     public class UserService:IUserService
     {
-        private List<User> _users = new List<User>
+
+        private readonly IDemoRepo _repository;
+        private readonly AppSettings _appSettings;
+
+
+        
+        private List<UserDTO> _users = new List<UserDTO>
         {
-            new User { Id = 1, FirstName = "Chaitanya", LastName = "Upadhye", Username = "test", Password = "test" },
-                        new User { Id = 2, FirstName = "Virat", LastName = "kohli", Username = "virat", Password = "test" }
+            new UserDTO { Id = "1", FirstName = "Chaitanya", LastName = "Upadhye", Username = "test", Password = "test" },
+                        new UserDTO { Id = "1", FirstName = "Virat", LastName = "kohli", Username = "virat", Password = "test" }
 
         };
 
-        private readonly AppSettings _appSettings;
 
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(IOptions<AppSettings> appSettings, IDemoRepo repository)
         {
             _appSettings = appSettings.Value;
+            _repository = repository;
+
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+            try
+            {
+                var user = _repository.GetUser(model);
+                //  var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
 
-            // return null if user not found
-            if (user == null) return null;
+                // return null if user not found
+                if (user == null) return null;
 
-            // authentication successful so generate jwt token
-            var token = generateJwtToken(user);
+                UserDTO userResponse = new UserDTO()
+                {
+                    Username = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Id = user.Id.ToString()
+                };
 
-            return new AuthenticateResponse(user, token);
+                // authentication successful so generate jwt token
+                var token = generateJwtToken(userResponse);
+
+                return new AuthenticateResponse(userResponse, token);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<UserDTO> GetAll()
         {
-            return _users;
+
+            try
+            {
+                return _users;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public User GetById(int id)
+        public IEnumerable<ToDo> GetUserToDos(Guid userId)
         {
-            return _users.FirstOrDefault(x => x.Id == id);
+
+            try
+            {
+                return _repository.GetToDos(userId);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+
+
+
+        public UserDTO GetById(string id)
+        {
+            try
+            {
+                var user = _repository.GetUserById(id);
+                return new UserDTO()
+                {
+                    Username = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Id = user.Id.ToString()
+                };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // helper methods
 
-        private string generateJwtToken(User user)
+        private string generateJwtToken(UserDTO user)
         {
             // generate token that is valid for 7 days - not really ideal, but just for the purpose of demo
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -67,6 +137,45 @@ namespace Demo_Web_API.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public ToDo AddToDo(ToDoDTO todo)
+        {
+            try
+            {
+                return _repository.AddTodo(todo);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public ToDo EditTodo(ToDoDTO todo)
+        {
+            try
+            {
+                return _repository.editTodo(todo);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool deleteToDo(ToDoDTO todDo)
+        {
+            try
+            {
+                return _repository.deleteToDo(todDo);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 }
